@@ -1,45 +1,47 @@
-# RiftOracle
+# RiftManager
 
-**League of Legends esports match prediction engine.**
+**Football Manager meets League of Legends esports.**
 
-Predicts professional LoL match outcomes using machine learning trained on historical match data, champion statistics, patch notes, and player performance metrics. Inspired by AWS's live Win Probability model used in LCS/LEC/Worlds broadcasts.
+Take control of a professional LoL team. Draft players, manage rosters, navigate the meta, and lead your squad through seasons of competitive play. Every pick, ban, and signing matters.
 
-## Data Sources
+Powered by real match data scraped from competitive play.
 
-| Source | Purpose | Method |
-|---|---|---|
-| [gol.gg](https://gol.gg) | Historical match data (champs, players, builds, KDA, objectives, timeline) | Web scraping |
-| [LoL Esports API](https://esports-api.lolesports.com) | Live schedule, team rosters, league standings | REST API |
-| Riot Games Data Dragon | Champion/base stats, item data, patch notes | Static data + scraping |
+## Features (in progress)
+
+- **Match Simulation Engine** — Realistic game simulation with champion matchups, player proficiency, team synergy, and upset potential
+- **Real Player Data** — Rosters and stats scraped from [gol.gg](https://gol.gg)
+- **Draft Phase** — Ban/pick strategy with champion counters and meta strength
+- **Season Mode** — Full league schedule → playoffs → championship (coming soon)
+- **Roster Management** — Sign, trade, develop players (coming soon)
+
+## Quick Demo
+
+```bash
+python demo_hle_dk.py
+```
+
+Simulates the real LCK HLE vs DK match with actual rosters and drafts.
 
 ## Architecture
 
 ```
-data/               # All data (gitignored except schemas)
-  raw/              # Raw scraped data
-  processed/        # Cleaned, feature-engineered datasets
-models/             # Trained model artifacts
-features/           # Feature engineering pipelines
-notebooks/          # Exploratory analysis
 src/
-  scrapers/         # gol.gg + patch note scrapers
-  pipeline/         # ETL orchestration
-  models/           # Training + inference
-  features/         # Feature transforms
-  api/              # Prediction API server
-  utils/            # Shared utilities
-tests/              # Test suite
-docs/               # Documentation
+  sim/          # Match simulation engine
+  scrapers/     # gol.gg data scraping
+  pipeline/     # Database storage (SQLAlchemy + SQLite)
+  api/          # FastAPI backend (coming soon)
+tests/          # Test suite (15 passing)
 ```
 
 ## Setup
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+pip install -e ".[dev]"
 ```
 
-## Usage
+## Data Sources
 
-*Coming soon.*
+| Source | Purpose |
+|---|---|
+| [gol.gg](https://gol.gg) | Match data, player stats, champion comps |
+| [LoL Esports API](https://esports-api.lolesports.com) | Live schedule, team rosters |
