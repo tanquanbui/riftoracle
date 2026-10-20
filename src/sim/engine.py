@@ -167,8 +167,11 @@ class MatchSimulator:
     BASE_GAME_DURATION = 30  # minutes
     DURATION_VARIANCE = 12   # ± minutes
 
-    def __init__(self, seed: int | None = None):
+    def __init__(self, seed: int | None = None, champions: dict[str, Champion] | None = None):
         self.rng = random.Random(seed)
+        # Optional champion data (meta strength, matchups). Without it the
+        # engine falls back to the built-in counter list and ignores meta.
+        self.champions = champions or {}
 
     def simulate_game(
         self, blue: Team, red: Team, blue_draft: TeamDraft, red_draft: TeamDraft
@@ -278,6 +281,10 @@ class MatchSimulator:
             champ_prof = player.champion_proficiency(champion)
             player_power = player.overall * 0.4 + champ_prof * 0.6
 
+            # Champion strength in the current meta
+            if champion in self.champions:
+                player_power += (self.champions[champion].meta_strength - 50) * 0.15
+
             # Champion matchup advantage
             matchup_bonus = 0
             if champion and enemy_champ:
@@ -307,6 +314,11 @@ class MatchSimulator:
         
         Uses known counter relationships. In production, this would
         come from real win rate data."""
+        if champ in self.champions and enemy in self.champions[champ].matchups:
+            return float(self.champions[champ].matchups[enemy])
+        if enemy in self.champions and champ in self.champions[enemy].matchups:
+            return -float(self.champions[enemy].matchups[champ])
+
         # Simple counters (can be expanded with real data)
         counters: dict[str, list[str]] = {
             "KSante": ["Jayce", "Gnar"],
